@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>The Book Haven</title>
+
+<link rel="icon" href="favicon.png">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Poppins:wght@300;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<style>
+body {margin:0;font-family:'Poppins';background:#1a1110;color:white;}
+
+/* NAVBAR */
+.navbar {
+position:fixed;top:0;width:100%;
+display:flex;justify-content:space-between;
+padding:15px 40px;z-index:1000;
+box-sizing: border-box;
+}
+.navbar.scrolled {background:rgba(0,0,0,0.85);}
+.logo {font-family:'Playfair Display'; color:#d4af37; font-size: 24px;}
+.nav a {color:white;margin-left:20px;text-decoration:none;}
+
+/* HERO */
+.hero {
+height:100vh;
+background:url('background.jpg') center/cover no-repeat;
+display:flex;justify-content:center;align-items:center;
+}
+.hero-box {
+background:rgba(0,0,0,0.65);
+padding:40px;border-radius:15px;text-align:center;
+}
+.hero h1 {
+font-size:70px;
+font-family:'Playfair Display';
+color:#d4af37;
+margin: 0 0 10px 0;
+}
+.subheading {
+color:#d4af37;
+letter-spacing:2px;
+margin-top:-10px;
+}
+.hero p {font-size:22px;color:#e6d8a3;}
+.btn {
+display:inline-block;margin-top:10px;
+padding:10px 15px;background:#25D366;
+color:white;border-radius:6px;text-decoration:none;border:none;cursor:pointer;
+font-family: 'Poppins';
+}
+
+/* SECTION */
+.section {padding:80px 30px;text-align:center;}
+.section-header {
+display:flex;justify-content:center;align-items:center;
+gap:20px;flex-wrap:wrap;
+}
+.catalog-btn {
+background:#d4af37;color:black;
+padding:10px 18px;border-radius:25px;text-decoration:none;
+font-weight: 500;
+}
+
+/* GRID */
+.grid {
+display:flex;flex-wrap:wrap;justify-content:center;gap:30px;margin-top: 30px;
+}
+
+/* CARD */
+.card {
+width:280px;border-radius:18px;overflow:hidden;
+background:rgba(255,255,255,0.05);
+backdrop-filter:blur(10px);
+transition:0.4s;
+}
+.card img {
+width:100%;height:180px;object-fit:cover;
+transition:0.5s;
+}
+.card:hover img {transform:scale(1.15);}
+.card:hover {transform:translateY(-10px);}
+.card h3 {color:#d4af37;margin:15px;}
+
+/* DROPDOWN */
+.dropdown {
+max-height:0;overflow:hidden;
+transition:0.5s;padding:0 15px;text-align:left;
+line-height: 1.6;
+}
+.card:hover .dropdown,
+.card.active .dropdown {
+max-height:500px;padding:10px;
+}
+
+/* INPUT */
+input, select {
+width:90%;padding:12px;margin:8px 0;
+border-radius:8px;border:1px solid #ccc;
+box-sizing: border-box;
+}
+input:focus, select:focus {
+border-color:#d4af37;
+box-shadow:0 0 8px rgba(212,175,55,0.5);
+outline: none;
+}
+
+/* TABLE */
+.table-container {
+max-height:200px;overflow-y:auto;
+border:1px solid #ccc;border-radius:8px;padding:5px;
+background: rgba(255,255,255,0.05);
+}
+table {width:100%; border-collapse: collapse;}
+th {background:#d4af37;color:black;position:sticky;top:0; padding: 8px;}
+td {padding:5px;}
+td input {width: 100%; margin: 0; padding: 6px;}
+
+/* POPUP */
+#popupForm {
+position:fixed;top:0;left:0;
+width:100%;height:100%;
+display:none;justify-content:center;align-items:center;
+background:rgba(0,0,0,0.7);
+z-index: 2000;
+}
+.popup-box {
+background:white;color:black;padding:20px;
+border-radius:10px;width:350px;
+}
+.popup-box h3 {margin-top: 0; color: #1a1110;}
+.popup-box .btn {margin-right: 10px;}
+
+/* LIVELY CHATBOX */
+.chat-widget {
+position: fixed; bottom: 25px; right: 25px;
+z-index: 3000; font-family: 'Poppins';
+}
+.chat-btn {
+width: 60px; height: 60px; border-radius: 50%;
+background: #d4af37; color: black;
+display: flex; justify-content: center; align-items: center;
+font-size: 24px; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+transition: 0.3s transform ease;
+}
+.chat-btn:hover { transform: scale(1.1); }
+.chat-window {
+position: absolute; bottom: 75px; right: 0;
+width: 320px; height: 420px;
+background: #221a19; border: 1px solid #d4af37;
+border-radius: 12px; display: none; flex-direction: column;
+overflow: hidden; box-shadow: 0 5px 25px rgba(0,0,0,0.5);
+}
+.chat-header {
+background: #d4af37; color: black; padding: 12px;
+font-weight: 600; display: flex; justify-content: space-between; align-items: center;
+}
+.chat-body {
+flex: 1; padding: 15px; overflow-y: auto;
+display: flex; flex-direction: column; gap: 10px;
+}
+.chat-msg {
+padding: 8px 12px; border-radius: 8px; max-width: 80%;
+font-size: 13px; line-height: 1.4;
+}
+.chat-msg.bot { background: rgba(255,255,255,0.1); color: #e6d8a3; align-self: flex-start; }
+.chat-msg.bot.error { background: rgba(231, 76, 60, 0.2); border: 1px solid #e74c3c; color: #ff9999; }
+.chat-msg.user { background: #d4af37; color: black; align-self: flex-end; }
+.chat-footer { padding: 10px; display: flex; gap: 5px; background: #1a1110; border-top: 1px solid rgba(255,255,255,0.05); }
+.chat-footer input { flex: 1; padding: 8px; margin: 0; background: #221a19; border: 1px solid #444; color: white; border-radius: 6px; font-size: 13px; }
+.chat-footer button { background: #d4af37; color: black; border: none; padding: 0 12px; border-radius: 6px; cursor: pointer; }
+.chat-options { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 5px; }
+.opt-btn { background: rgba(212,175,55,0.2); border: 1px solid #d4af37; color: white; padding: 4px 8px; border-radius: 15px; font-size: 11px; cursor: pointer; transition: 0.2s; }
+.opt-btn:hover { background: #d4af37; color: black; }
+
+/* FOOTER */
+.footer {
+text-align:center;padding:20px;
+background:#0d0808;font-size:14px;
+}
+.footer i {color:#d4af37;margin:0 5px;}
+</style>
+</head>
+
+<body>
+
+<div class="navbar" id="navbar">
+<div class="logo">THE BOOK HAVEN</div>
+<div class="nav">
+<a href="#">Home</a>
+<a href="#products">Genres</a>
+<a href="#contact">Order Inquiry</a>
+</div>
+</div>
+
+<div class="hero">
+<div class="hero-box">
+<h1>THE BOOK HAVEN</h1>
+<h3 class="subheading">PREMIUM BOOK DISTRIBUTORS SINCE 1985</h3>
+<p>Your Trusted Literary & Educational Supplier</p>
+
+<a href="tel:9945219234" class="btn">📞 Call Us</a>
+<a href="https://wa.me/919945219234" class="btn">💬 WhatsApp Shop</a>
+</div>
+</div>
+
+<div class="section" id="products">
+
+<div class="section-header">
+<h2>Explore Our Catalogue</h2>
+<a href="catalog.xlsx" download class="catalog-btn"><i class="fas fa-file-excel"></i> Download Excel Catalogue</a>
+</div>
+
+<div class="grid">
+
+<div class="card"><img src="pic1.jpg"><h3>Fiction & Literature</h3>
+<div class="dropdown">
+Classic Literature<br>Contemporary Fiction<br>Historical Fiction<br>Mystery & Thriller<br>Sci-Fi & Fantasy<br>Romance Novels<br>Poetry Collections<br>
+<button onclick="openForm('Fiction & Literature')" class="btn">Get Quote</button>
+</div></div>
+
+<div class="card"><img src="pic2.jpg"><h3>Non-Fiction</h3>
+<div class="dropdown">
+Biographies & Memoirs<br>History & Politics<br>Self-Help & Wellness<br>Business & Finance<br>Philosophy & Religion<br>True Crime<br>Art & Photography<br>
+<button onclick="openForm('Non-Fiction')" class="btn">Get Quote</button>
+</div></div>
+
+<div class="card"><img src="pic3.jpg"><h3>Academic & Textbooks</h3>
+<div class="dropdown">
+School Textbooks (K-12)<br>Higher Ed Textbooks<br>Engineering & IT Reference<br>Medical & Science Books<br>Competitive Exam Guides<br>Dictionaries & Atlases<br>
+<button onclick="openForm('Academic & Textbooks')" class="btn">Get Quote</button>
+</div></div>
+
+<div class="card"><img src="pic4.jpg"><h3>Children & YA</h3>
+<div class="dropdown">
+Picture Books<br>Early Readers<br>Middle Grade Fiction<br>Young Adult (YA) Novels<br>Educational Activity Books<br>Comic Books & Manga<br>
+<button onclick="openForm('Children & YA')" class="btn">Get Quote</button>
+</div></div>
+
+<div class="card"><img src="pic5.jpg"><h3>Special Editions</h3>
+<div class="dropdown">
+Hardcover Box Sets<br>Leather-bound Classics<br>Signed Copies<br>Out-of-print Editions<br>Coffee Table Books<br>Imported Worldwide Editions<br>
+<button onclick="openForm('Special Editions')" class="btn">Get Quote</button>
+</div></div>
+
+</div>
+
+</div>
+
+<div class="section" id="contact">
+<h2>Bulk Order Inquiry</h2>
+
+<input id="name" placeholder="Your Name">
+<input id="company" placeholder="Institution / Company Name (Optional)">
+
+<select id="category">
+<option>Select Primary Genre</option>
+<option>Fiction & Literature</option>
+<option>Non-Fiction</option>
+<option>Academic & Textbooks</option>
+<option>Children & YA</option>
+<option>Special Editions</option>
+</select>
+
+<h4>Specify Book Requirements (Press Enter in any field to add a line)</h4>
+
+<div class="table-container">
+<table>
+<thead><tr><th>Book Title / ISBN</th><th>Qty</th><th>Binding (Paperback/Hardcover)</th></tr></thead>
+<tbody id="tableBody1">
+<tr><td><input class="m" placeholder="e.g. The Great Gatsby"></td><td><input class="q" placeholder="e.g. 5"></td><td><input class="g" placeholder="e.g. Hardcover"></td></tr>
+<tr><td><input class="m"></td><td><input class="q"></td><td><input class="g"></td></tr>
+<tr><td><input class="m"></td><td><input class="q"></td><td><input class="g"></td></tr>
+</tbody>
+</table>
+</div>
+
+<button onclick="sendWhatsApp()" class="btn">Send Inquiry via WhatsApp</button>
+
+<br><br>
+
+<iframe 
+src="https://maps.google.com/maps?q=The%20Finner%20Side%20Resort,%20Bangalore&t=&z=14&ie=UTF8&iwloc=&output=embed" 
+height="250" style="width:100%;border:0;" allowfullscreen="" loading="lazy">
+</iframe>
+
+</div>
+
+<div id="popupForm">
+<div class="popup-box">
+<h3>Get Genre Quote</h3>
+
+<input id="pname" placeholder="Name">
+<input id="pcompany" placeholder="Institution/Company">
+<input id="pphone" placeholder="Phone Number">
+
+<div class="table-container">
+<table>
+<thead><tr><th>Book Title/Specs</th><th>Qty</th><th>Binding Prefer.</th></tr></thead>
+<tbody id="tableBody2">
+<tr><td><input class="m" placeholder="Title/Author"></td><td><input class="q" placeholder="Qty"></td><td><input class="g" placeholder="PB/HB"></td></tr>
+<tr><td><input class="m"></td><td><input class="q"></td><td><input class="g"></td></tr>
+<tr><td><input class="m"></td><td><input class="q"></td><td><input class="g"></td></tr>
+</tbody>
+</table>
+</div>
+
+<div style="margin-top:15px;">
+<button onclick="sendQuote()" class="btn">Send</button>
+<button onclick="closeForm()" style="background:#ccc; padding:10px 15px; border-radius:6px; border:none; cursor:pointer;">Cancel</button>
+</div>
+</div>
+</div>
+
+<div class="chat-widget">
+<div class="chat-btn" onclick="toggleChat()"><i class="fas fa-comments"></i></div>
+<div class="chat-window" id="chatWin">
+<div class="chat-header">
+<span>📚 Haven Assistant</span>
+<i class="fas fa-times" style="cursor:pointer;" onclick="toggleChat()"></i>
+</div>
+<div class="chat-body" id="chatBody">
+</div>
+<div class="chat-footer">
+<input id="chatInput" placeholder="Type here..." onkeydown="if(e=event,e.key==='Enter')chatSubmit()">
+<button onclick="chatSubmit()"><i class="fas fa-paper-plane"></i></button>
+</div>
+</div>
+</div>
+
+<div class="footer">
+THE BOOK HAVEN |
+<i class="fas fa-location-dot"></i> Bangalore |
+<i class="fas fa-phone"></i> 9945219234 |
+<i class="fas fa-envelope"></i> thebookhaven@gmail.com
+</div>
+
+<script>
+// Scroll behavior for Navbar
+const navbar = document.getElementById('navbar');
+window.addEventListener("scroll",()=>{
+navbar.classList.toggle("scrolled",window.scrollY>50);
+});
+
+// Dynamic table row addition on Enter Key press
+document.addEventListener("keydown",function(e){
+if(e.key==="Enter"){
+let a=document.activeElement;
+if(a.classList.contains("m")||a.classList.contains("q")||a.classList.contains("g")){
+e.preventDefault();
+let row=document.createElement("tr");
+row.innerHTML=`<td><input class="m"></td><td><input class="q"></td><td><input class="g"></td>`;
+a.closest("tbody").appendChild(row);
+}
+}
+});
+
+// Main Section Inquiry Submission
+function sendWhatsApp(){
+let userName = document.getElementById("name").value;
+let userCompany = document.getElementById("company").value;
+let userCategory = document.getElementById("category").value;
+
+let msg="Book Inquiry:%0a";
+msg+="Name:"+userName+"%0a";
+msg+="Institution/Company:"+userCompany+"%0a";
+msg+="Category Preferred:"+userCategory+"%0a%0a";
+
+document.querySelectorAll("#tableBody1 tr").forEach(r=>{
+let m=r.querySelector(".m").value;
+let q=r.querySelector(".q").value;
+let g=r.querySelector(".g").value;
+
+if(m){
+msg+=m;
+if(q) msg+=" | Qty:"+q;
+if(g) msg+=" | Format:"+g;
+msg+="%0a";
+}
+});
+
+window.open("https://wa.me/919945219234?text="+msg);
+}
+
+// Popup Form Controls
+let selected="";
+const popupForm = document.getElementById('popupForm');
+
+function openForm(p){selected=p;popupForm.style.display="flex";}
+function closeForm(){popupForm.style.display="none";}
+
+// Card Popup Quote Submission
+function sendQuote(){
+let pnameVal = document.getElementById("pname").value;
+let pcompanyVal = document.getElementById("pcompany").value;
+let pphoneVal = document.getElementById("pphone").value;
+
+let msg="Book Quote Request:%0a";
+msg+="Name:"+pnameVal+"%0a";
+msg+="Institution/Company:"+pcompanyVal+"%0a";
+msg+="Phone:"+pphoneVal+"%0a";
+msg+="Selected Genre Category:"+selected+"%0a%0a";
+
+document.querySelectorAll("#tableBody2 tr").forEach(r=>{
+let m=r.querySelector(".m").value;
+let q=r.querySelector(".q").value;
+let g=r.querySelector(".g").value;
+
+if(m){
+msg+=m;
+if(q) msg+=" | Qty:"+q;
+if(g) msg+=" | Format:"+g;
+msg+="%0a";
+}
+});
+
+window.open("https://wa.me/919945219234?text="+msg);
+}
+
+// CHATBOX LOGIC & SYSTEM DEFINITIONS
+const booksData = [
+{title: "The Great Gatsby", price: "₹299", qty: 14},
+{title: "To Kill a Mockingbird", price: "₹349", qty: 8},
+{title: "Atomic Habits", price: "₹450", qty: 25},
+{title: "Sapiens", price: "₹499", qty: 12},
+{title: "Introduction to Algorithms", price: "₹899", qty: 5}
+];
+
+let chatState = "home"; 
+let orderDetails = { book: "", qty: "", name: "", phone: "", address: "" };
+
+function toggleChat() {
+const win = document.getElementById("chatWin");
+win.style.display = (win.style.display === "flex") ? "none" : "flex";
+if(win.style.display === "flex" && document.getElementById("chatBody").children.length === 0) {
+initChat();
+}
+}
+
+function initChat() {
+const body = document.getElementById("chatBody");
+body.innerHTML = "";
+addBotMessage("Hello! 👋 Welcome to The Book Haven assistant. How can I help you discover something special today?");
+showHomeOptions();
+}
+
+function addBotMessage(text, isError = false) {
+const body = document.getElementById("chatBody");
+const m = document.createElement("div");
+m.className = isError ? "chat-msg bot error" : "chat-msg bot";
+m.innerHTML = text;
+body.appendChild(m);
+body.scrollTop = body.scrollHeight;
+}
+
+function addUserMessage(text) {
+const body = document.getElementById("chatBody");
+const m = document.createElement("div");
+m.className = "chat-msg user";
+m.textContent = text;
+body.appendChild(m);
+body.scrollTop = body.scrollHeight;
+}
+
+function showHomeOptions() {
+const body = document.getElementById("chatBody");
+const opts = document.createElement("div");
+opts.className = "chat-options";
+opts.innerHTML = `
+<button class="opt-btn" onclick="handleOpt('browse')">📖 Check Stock/Price</button>
+<button class="opt-btn" onclick="handleOpt('custom')">✍️ Custom Order</button>
+`;
+body.appendChild(opts);
+body.scrollTop = body.scrollHeight;
+}
+
+function handleOpt(action) {
+if(action === 'browse') {
+addUserMessage("I want to check available books.");
+chatState = "selecting_book";
+let listText = "Here are a few in-demand titles currently available. Select one or type yours:<br><br>";
+booksData.forEach((b, i) => {
+listText += `<b>${i+1}. ${b.title}</b> (${b.price})<br>`;
+});
+addBotMessage(listText);
+
+const body = document.getElementById("chatBody");
+const opts = document.createElement("div");
+opts.className = "chat-options";
+booksData.forEach(b => {
+opts.innerHTML += `<button class="opt-btn" onclick="selectTrackedBook('${b.title}')">${b.title}</button>`;
+});
+body.appendChild(opts);
+body.scrollTop = body.scrollHeight;
+} else if(action === 'custom') {
+addUserMessage("I have a specific book name.");
+addBotMessage("Excellent! Please type out the book title you're searching for:");
+chatState = "get_custom_title";
+}
+}
+
+function selectTrackedBook(title) {
+let target = booksData.find(b => b.title.toLowerCase() === title.toLowerCase());
+addUserMessage(title);
+orderDetails.book = target.title;
+addBotMessage(`Perfect choice! 🌟<br><b>Price:</b> ${target.price}<br><b>Available Stock:</b> ${target.qty} units left.<br><br>Are you interested in purchasing or securing an order setup for this book?`);
+
+const body = document.getElementById("chatBody");
+const opts = document.createElement("div");
+opts.className = "chat-options";
+opts.innerHTML = `
+<button class="opt-btn" onclick="confirmInterest(true)">Yes, proceed</button>
+<button class="opt-btn" onclick="confirmInterest(false)">No, restart</button>
+`;
+body.appendChild(opts);
+body.scrollTop = body.scrollHeight;
+chatState = "awaiting_interest";
+}
+
+function confirmInterest(interested) {
+if(interested) {
+addUserMessage("Yes, I want to buy this.");
+addBotMessage("Awesome! How many copies do you need?");
+chatState = "get_qty";
+} else {
+addUserMessage("No thanks.");
+initChat();
+}
+}
+
+function chatSubmit() {
+const input = document.getElementById("chatInput");
+const val = input.value.trim();
+if(!val) return;
+
+const cleanVal = val.replace(/[<>]/g, ""); 
+if(!cleanVal) return;
+
+addUserMessage(cleanVal);
+input.value = "";
+
+if(chatState === "get_custom_title") {
+if(/^\d+$/.test(cleanVal) || cleanVal.length < 2) {
+addBotMessage("Please provide a valid book title name.", true);
+return;
+}
+orderDetails.book = cleanVal;
+addBotMessage("Got it! Custom or unlisted books will be custom verified by our dispatch team for pricing immediately.<br><br>How many copies do you require?");
+chatState = "get_qty";
+} 
+else if(chatState === "selecting_book") {
+let target = booksData.find(b => b.title.toLowerCase() === cleanVal.toLowerCase());
+if(target) {
+orderDetails.book = target.title;
+addBotMessage(`Found it! ✨<br><b>Price:</b> ${target.price}<br><b>Stock:</b> ${target.qty} units.<br><br>Would you like to purchase? Type <b>yes</b> or <b>no</b>.`);
+chatState = "awaiting_interest_text";
+} else {
+if(/^\d+$/.test(cleanVal) || cleanVal.length < 2) {
+addBotMessage("Please provide a valid book title name.", true);
+return;
+}
+orderDetails.book = cleanVal;
+addBotMessage("That title is currently off-grid or custom order. We'll verify it for you! How many copies do you need?");
+chatState = "get_qty";
+}
+}
+else if(chatState === "awaiting_interest_text") {
+if(cleanVal.toLowerCase().includes("yes")) {
+addBotMessage("Awesome! How many copies do you need?");
+chatState = "get_qty";
+} else {
+initChat();
+}
+}
+else if(chatState === "get_qty") {
+const parsedQty = parseInt(cleanVal, 10);
+if(isNaN(parsedQty) || parsedQty <= 0) {
+addBotMessage("⚠️ Invalid quantity. Please enter a valid number (e.g., 2).", true);
+return;
+}
+orderDetails.qty = parsedQty;
+addBotMessage("Understood. May I have your full name?");
+chatState = "get_name";
+}
+else if(chatState === "get_name") {
+if(cleanVal.length < 2 || /\d/.test(cleanVal)) {
+addBotMessage("⚠️ Please enter a genuine name without numbers.", true);
+return;
+}
+orderDetails.name = cleanVal;
+addBotMessage("Thank you. Please enter your <b>10-digit Contact Number</b> to complete the verification:");
+chatState = "get_phone";
+}
+else if(chatState === "get_phone") {
+const cleanPhone = cleanVal.replace(/\s+/g, '');
+if(!/^\d{10}$/.test(cleanPhone)) {
+addBotMessage("⚠️ Invalid format. Please enter a valid 10-digit mobile number without spaces or country codes.", true);
+return;
+}
+orderDetails.phone = cleanPhone;
+addBotMessage("Perfect. Lastly, please provide your exact <b>Delivery Address</b> (Minimum 10 characters required):");
+chatState = "get_address";
+}
+else if(chatState === "get_address") {
+if(cleanVal.length < 10) {
+addBotMessage("⚠️ Please enter a complete, valid delivery address for shipping estimations.", true);
+return;
+}
+orderDetails.address = cleanVal;
+addBotMessage("Thank you so much for your time! 🌟 Your complete order details are safely compiled. Pressing the button below redirects you to WhatsApp to finalize your dispatch details.");
+
+const body = document.getElementById("chatBody");
+const opts = document.createElement("div");
+opts.className = "chat-options";
+opts.innerHTML = `<button class="btn" style="background:#25D366; color:white; width:100%;" onclick="sendChatWhatsApp()">🚀 Finalize Order via WhatsApp</button>`;
+body.appendChild(opts);
+body.scrollTop = body.scrollHeight;
+chatState = "complete";
+}
+}
+
+function sendChatWhatsApp() {
+let msg = "✨ *New Verified Order from Chat Assistant* ✨%0a%0a";
+msg += "*Customer Name:* " + orderDetails.name + "%0a";
+msg += "*Book Ordered:* " + orderDetails.book + "%0a";
+msg += "*Quantity Required:* " + orderDetails.qty + "%0a";
+msg += "*Contact Number:* " + orderDetails.phone + "%0a";
+msg += "*Delivery Address:* " + orderDetails.address + "%0a%0a";
+msg += "_Thank you for your valuable time! Waiting for shop authorization._";
+
+window.open("https://wa.me/919945219234?text=" + msg);
+initChat();
+toggleChat();
+}
+</script>
+
+</body>
+</html>
